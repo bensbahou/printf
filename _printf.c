@@ -9,40 +9,18 @@
 
 int _printf(const char *format, ...)
 {
-	int i, pr_count = 0, total_print_count = 0, next;
+	int total_print_count = 0;
+	print_sym_func *print_sym = init_print_sym();
+
 	va_list args;
 
 	if (format == NULL)
 		return (-1);
 	va_start(args, format);
-	for (i = 0; format[i] != '\0'; i++, total_print_count++)
-	{
-		if (format[i] == '%')
-		{
-			next = format[i + 1];
-			if (next == '%' || next == 'c')
-				_putchar(next == '%' ? '%' : va_arg(args, int));
-			else if (next == 's' || next == 'd' || next == 'i')
-			{
-				pr_count = next == 's' ? print_string(args) : print_integer(args);
-				if (pr_count == -1)
-					return (-1);
-				total_print_count += pr_count - 1;
-			}
-			else if (next != ' ' && next != '\0')
-			{
-				_putchar(format[i]);
-				_putchar(next);
-				total_print_count++;
-			}
-			else
-				return (-1);
-			i++;
-		}
-		else
-			_putchar(format[i]);
-	}
+	total_print_count = _print_aux(format, args, print_sym);
+
 	va_end(args);
+	free(print_sym);
 	return (total_print_count);
 }
 
